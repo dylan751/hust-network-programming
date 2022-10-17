@@ -11,8 +11,7 @@ int main()
     unsigned char *y = (unsigned char *)&x;
     for (int i = 0; i < 4; i++)
     {
-
-        printf("%X", y[i]);;
+        printf("%X", y[i]);
     }
     printf("\n");
 }
