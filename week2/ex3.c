@@ -30,17 +30,18 @@ int main()
         for (int i = 0; i < n; i++)
         {
             // printf("%s\n", output[i]->d_name);
-            if (output[i]->d_type == 4)
+
+            if (output[i]->d_type == 4) // Directories
             {
-                sprintf(concatStr, "<b>%s\n", output[i]->d_name);
+                sprintf(concatStr, "<b>%s</b>\n", output[i]->d_name);
             }
-            else if (output[i]->d_type == 10)
+            else if (output[i]->d_type == 10) // Files
             {
-                sprintf(concatStr, "<i>%s\n", output[i]->d_name);
+                sprintf(concatStr, "<i>%s</i>\n", output[i]->d_name);
             }
             strcat(outputStr, concatStr);
         }
     }
-    strcat(outputStr, "\n</html>");
+    strcat(outputStr, "</html>");
     printf("%s\n", outputStr);
 }
