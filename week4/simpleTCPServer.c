@@ -14,8 +14,11 @@
  * Khi 1 user kết nối tới cổng 5555 trên máy mình -> Gửi message cho server
  * Server in các message đó ra mãi cho tới khi user nhập "exit"
  *
- * Lệnh: `nc -vv 127.0.0.1 5555`: Kết nối tới host: 127.0.0.1, port: 5555
+ * @brief Cách chạy chương trình
+ * `./simpleTCPServer`: Khởi động server (listen ở port 9999)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 5555` để Kết nối tới host: 127.0.0.1, port: 9999
  * Lệnh: `netstat -anvp tcp | awk 'NR<3 || /LISTEN/'`: Liệt kê các cổng đang chạy trên máy
+ * Sang terminal mới, gõ chữ gì thì sẽ hiển thị trên terminal của server (nhập mãi cho đến khi ấn nhập 'exit')
  */
 
 #define INVALID_SOCKET -1
