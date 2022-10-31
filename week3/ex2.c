@@ -10,7 +10,7 @@
  * @brief Đề bài: Get host's IP address by name
  * Đầu vào: domain name
  * Đầu ra: IP address
- * 
+ *
  * Example input: ./ex2 google.com
  * Example output: 142.250.66.46 (An IP Address in ASCII)
  *
@@ -42,22 +42,24 @@ int main(int argc, char **argv)
                 count += 1;
             }
 
-            if(count > 0) {
+            if (count > 0)
+            {
                 // Tạo 1 socket mới
                 int s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-                if(s != INVALID_SOCKET) {
+                if (s != INVALID_SOCKET)
+                {
                     struct sockaddr_in addr;
                     addr.sin_family = AF_INET;
                     addr.sin_addr = inaddr;
                     addr.sin_port = htons(80); // htons: Host To Net Short
                     // Kết nối
-                    int error = connect(s, (struct sockaddr*)&addr, sizeof(addr));
-                    if(error == 0) // Nếu connect thành công
+                    int error = connect(s, (struct sockaddr *)&addr, sizeof(addr));
+                    if (error == 0) // Nếu connect thành công
                     {
                         char buffer[1024] = {0};
-                        // Gửi message "Hello" cho trang web
-                        // Vì message không đúng chuẩn nào -> Web sẽ báo lại lỗi "Bad Request" -> In ra
-                        char* hello = "Hello";
+                        // Gửi message bất kỳ cho trang web
+                        // Gửi lệnh đúng chuẩn giao thức HTTP (Sẽ trả về lỗi Moved Permanently nhưng ksao)
+                        char *hello = "GET / HTTP/1.1\r\nHost: nginx\r\n\r\n";
                         int sent = send(s, hello, strlen(hello), 0);
                         int received = recv(s, buffer, sizeof(buffer), 0);
                         printf("%d %s\n", received, buffer);
