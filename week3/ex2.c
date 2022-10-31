@@ -7,7 +7,7 @@
 
 /**
  * @file ex2.c
- * @brief Đề bài
+ * @brief Đề bài: Get host's IP address by name
  * Đầu vào: domain name
  * Đầu ra: IP address
  * 
@@ -55,6 +55,8 @@ int main(int argc, char **argv)
                     if(error == 0) // Nếu connect thành công
                     {
                         char buffer[1024] = {0};
+                        // Gửi message "Hello" cho trang web
+                        // Vì message không đúng chuẩn nào -> Web sẽ báo lại lỗi "Bad Request" -> In ra
                         char* hello = "Hello";
                         int sent = send(s, hello, strlen(hello), 0);
                         int received = recv(s, buffer, sizeof(buffer), 0);
