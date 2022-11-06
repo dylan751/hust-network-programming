@@ -11,13 +11,13 @@
 /**
  * @file simpleTCPServer.c
  * @brief Đề bài
- * Tạo 1 TCP Server để lắng nghe ở port 5555
- * Khi 1 user kết nối tới cổng 5555 trên máy mình -> Gửi message cho server
+ * Tạo 1 TCP Server để lắng nghe ở port 9999
+ * Khi 1 user kết nối tới cổng 9999 trên máy mình -> Gửi message cho server
  * Server dùng system chạy lệnh đó -> Output kết quả vào file `output.txt`
  *
  * @brief Cách chạy chương trình
  * `./simpleTCPServer`: Khởi động server (listen ở port 9999)
- * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 5555` để Kết nối tới host: 127.0.0.1, port: 9999
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 9999` để Kết nối tới host: 127.0.0.1, port: 9999
  * Lệnh: `netstat -anvp tcp | awk 'NR<3 || /LISTEN/'`: Liệt kê các cổng đang chạy trên máy
  *
  * @brief BTVN
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
         SOCKADDR_IN saddr, caddr;
         unsigned int clen = sizeof(caddr);
         saddr.sin_family = AF_INET;
-        saddr.sin_port = htons(5555);
+        saddr.sin_port = htons(9999);
         saddr.sin_addr.s_addr = 0;
         bind(sfd, (SOCKADDR *)&saddr, sizeof(saddr));
         listen(sfd, 10);
