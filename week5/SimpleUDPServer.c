@@ -16,7 +16,7 @@
  * @brief Cách chạy chương trình
  * `./simpleUDPServer`: Khởi động server (listen ở port 9999)
  * Mở 1 terminal mới, gõ lệnh: `nc -vv -u 127.0.0.1 6101` để Kết nối tới host: 127.0.0.1, port: 6101
- * Lệnh: `netstat -anvp tcp | awk 'NR<3 || /LISTEN/'`: Liệt kê các cổng đang chạy trên máy
+ * Lệnh: `lsof -PiTCP -sTCP:LISTEN`: Liệt kê các cổng đang chạy trên máy
  * Sang terminal mới, gõ chữ gì thì sẽ hiển thị trên terminal của server (nhập mãi cho đến khi ấn nhập 'exit')
  */
 
