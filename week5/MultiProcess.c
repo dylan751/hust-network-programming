@@ -1,5 +1,19 @@
 #include <stdio.h>
-#include <unistd.h> // For fork()
+#include <unistd.h> // For fork() function
+
+void forkexample()
+{
+    int x = 1;
+    if (fork() == 0)
+    {
+        printf("Child has x = %d\n", ++x);
+    }
+    else
+    {
+
+        printf("Parent has x = %d\n", --x);
+    }
+}
 
 int main()
 {
@@ -32,5 +46,7 @@ int main()
     }
 
     printf("Hello\n");
+    printf("--------------------------\n");
+    forkexample();
     return 0;
 }
