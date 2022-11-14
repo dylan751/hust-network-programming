@@ -23,7 +23,11 @@
  * SigQueue để báo hiệu cho parent process gửi cho nhiều client
  *
  * @brief Cách chạy chương trình
- *
+ * `./TCPEchoForkServer`: Khởi động server (listen ở port 9999)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 9999` để Kết nối tới host: 127.0.0.1, port: 9999
+ * Lệnh: `lsof -PiTCP -sTCP:LISTEN`: Liệt kê các cổng đang chạy trên máy
+ * Sang terminal mới, gõ chữ gì thì sẽ hiển thị trên terminal của server và nhận lại callback từ server (nhập mãi cho đến khi ấn nhập 'exit')*
+ * Notes: Có thể mở nhiều client cùng kết nối tới 1 server (multi process)
  */
 
 #define INVALID_SOCKET -1
@@ -46,6 +50,15 @@ void signal_handler(int signum)
         while (waitpid(-1, &stat, WNOHANG) > 0)
         {
             // DO NOTHING HERE SIMPLY WAIT FOR CHILD PROCESS TO BE RELEASED
+            for (int i = 0; i < g_clientcount; i++)
+            {
+                char feedback[1024] = {0};
+                FILE* f = fopen("data.tmp", "rt");
+                fgets(feedback, sizeof(feedback), f);
+                printf("%s\n", feedback);
+                fclose(f);
+                send(g_clientfd[i], feedback, strlen(feedback), 0);
+            }
         }
     }
     else if (signum == SIGINT)
@@ -65,7 +78,7 @@ int main()
     SOCKADDR_IN saddr, caddr;
     unsigned int clen = sizeof(caddr);
     saddr.sin_family = AF_INET;
-    saddr.sin_port = htons(1234);
+    saddr.sin_port = htons(9999);
     saddr.sin_addr.s_addr = 0;
     bind(sfd, (SOCKADDR *)&saddr, sizeof(saddr));
     listen(sfd, 10);
@@ -84,7 +97,11 @@ int main()
                 {
                     printf("Received: %s\n", buffer);
                     send(cfd, buffer, strlen(buffer), 0);
-                    // SIGQUEUE de bao server
+                    FILE* f = fopen("data.tmp", "w");
+                    fprintf(f, "%s", buffer);
+                    fclose(f);
+                    // SIGQUEUE de bao server - KILL(PID, SIGNUM)
+                    kill(parent_id, SIGUSR1);
                 }
                 else
                     exit(0);
@@ -92,7 +109,9 @@ int main()
         }
         else
         {
-            close(cfd);
+            // Luu lai 1 danh sach
+            printf("Client count: %d\n", g_clientcount);
+            g_clientfd[g_clientcount++] = cfd;
         }
     }
 
