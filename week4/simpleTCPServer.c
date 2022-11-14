@@ -10,13 +10,13 @@
 /**
  * @file simpleTCPServer.c
  * @brief Đề bài
- * Tạo 1 TCP Server để lắng nghe ở port 5555
- * Khi 1 user kết nối tới cổng 5555 trên máy mình -> Gửi message cho server
+ * Tạo 1 TCP Server để lắng nghe ở port 9999
+ * Khi 1 user kết nối tới cổng 9999 trên máy mình -> Gửi message cho server
  * Server in các message đó ra mãi cho tới khi user nhập "exit"
  *
  * @brief Cách chạy chương trình
  * `./simpleTCPServer`: Khởi động server (listen ở port 9999)
- * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 5555` để Kết nối tới host: 127.0.0.1, port: 9999
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 9999` để Kết nối tới host: 127.0.0.1, port: 9999
  * Lệnh: `lsof -PiTCP -sTCP:LISTEN`: Liệt kê các cổng đang chạy trên máy
  * Sang terminal mới, gõ chữ gì thì sẽ hiển thị trên terminal của server (nhập mãi cho đến khi ấn nhập 'exit')
  */
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
         unsigned int clen = sizeof(caddr);
         // Cấu hình địa chỉ socket
         saddr.sin_family = AF_INET;   // = AF_INET -> Dùng IPv4
-        saddr.sin_port = htons(9999); // Listen ở port 5555
+        saddr.sin_port = htons(9999); // Listen ở port 9999
         saddr.sin_addr.s_addr = 0;    // Địa chỉ = 0 -> Bảo máy mở mọi cổng (cứ gửi đến là lắng nghe)
 
         // Kết nối tới socket
