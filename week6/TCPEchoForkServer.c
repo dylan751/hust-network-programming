@@ -85,6 +85,7 @@ int main()
     while (0 == 0)
     {
         int cfd = accept(sfd, (SOCKADDR *)&caddr, &clen);
+        // Lệnh fork(): Trả về 0 nếu là tiến trình con, trả về id khác nếu là tiến trình cha
         if (fork() == 0)
         {
             close(sfd);

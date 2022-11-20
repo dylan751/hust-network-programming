@@ -84,8 +84,10 @@ int main(int argc, char **argv)
                     buffer[strlen(buffer) - 1] = 0;
                 }
                 char command[1024] = {0};
+                // Print the output of the command sent by the Client side to 'out.txt'
                 sprintf(command, "%s > out.txt", buffer);
                 system(command);
+                // Read the output of the command from 'out.txt'
                 FILE *f = fopen("out.txt", "rb");
                 fseek(f, 0, SEEK_END);
                 int size = ftell(f);
@@ -93,6 +95,7 @@ int main(int argc, char **argv)
                 char *fdata = (char *)calloc(size, 1);
                 fread(fdata, 1, size, f);
                 fclose(f);
+                // Send the output of the command to the Client
                 SendPacket(cfd, fdata, size);
                 free(fdata);
             }

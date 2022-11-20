@@ -26,7 +26,7 @@ int main()
     */
 
     // Cách kiểm soát việc nhân bản tiến trình con (Luôn check điều kiện các tiến trình)
-    // Lệnh fork(): Trả về 0 nếu là tiến trình cha, trả về id khác nếu là tiến trình con
+    // Lệnh fork(): Trả về 0 nếu là tiến trình con, trả về id khác nếu là tiến trình cha
     if (fork() == 0)
     {
         printf("A child has been created!\n");
