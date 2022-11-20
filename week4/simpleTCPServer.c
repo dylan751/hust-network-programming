@@ -43,11 +43,11 @@ int main(int argc, char **argv)
         // Kết nối tới socket
         bind(sfd, (SOCKADDR *)&saddr, sizeof(saddr));     // Thông báo kết nối, đợi ở cổng nào ntn
         listen(sfd, 10);                                  // 10: Độ dài hàng đợi
-        int cfd = accept(sfd, (SOCKADDR *)&caddr, &clen); // cfd: c file descriptor
+        int cfd = accept(sfd, (SOCKADDR *)&caddr, &clen); // cfd: client file descriptor
         if (cfd != INVALID_SOCKET)
         {
             char *welcome = "Hello my first TCP server\n";
-            send(cfd, welcome, strlen(welcome), 0);
+            send(cfd, welcome, strlen(welcome), 0); // Gửi message welcome tới client
             while (0 == 0)
             {
                 char buffer[1024] = {0};
