@@ -70,7 +70,10 @@ void signal_handler(int signum)
 int main()
 {
     int parent_id = getpid();
+    /* --- For SIGNUM references, reads slide Chapter 5 */
+    // Ctrl-C sends an INT signal ("interrupt", SIGINT)
     signal(SIGINT, signal_handler);
+    // Khi 1 tiến trình con kết thúc, nó sẽ gửi tín hiệu SIGCHLD tới tiến trình cha
     signal(SIGCHLD, signal_handler);
     signal(SIGUSR1, signal_handler);
 
