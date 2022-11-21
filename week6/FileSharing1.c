@@ -118,6 +118,7 @@ void tcp_process()
             send(cfd, buffer, strlen(buffer), 0);
         }
         fclose(f);
+        send(cfd, "END", 3, 0);
         close(fd);
     }
 }
