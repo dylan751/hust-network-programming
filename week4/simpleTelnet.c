@@ -16,14 +16,13 @@
  * Server dùng system chạy lệnh đó -> Output kết quả vào file `output.txt`
  *
  * @brief Cách chạy chương trình
- * `./simpleTCPServer`: Khởi động server (listen ở port 9999)
- * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 9999` để Kết nối tới host: 127.0.0.1, port: 9999
- * Gõ các lệnh bash ("ls", "ls ../", ...) -> Check file output.txt (Nó sẽ trả kết quả vào file output.txt)
+ * `./BTVN`: Khởi động server (listen ở port 4000)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv -u 127.0.0.1 4000` để Kết nối tới host: 127.0.0.1, port: 4000, udp
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv -u -l 7000` để lắng nghe phản hồi ở cổng 7000
  * Lệnh: `lsof -PiTCP -sTCP:LISTEN`: Liệt kê các cổng đang chạy trên máy
- *
- * @brief BTVN
- * Làm 1 client nối tới server này
- * Auto chạy lệnh 'pwd'
+ * Nhập tên ở terminal cổng 4000 -> Sẽ tạo ra 1 file client.txt, chứa IP và tên mình
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 5000` để Kết nối tới host: 127.0.0.1, port: 5000, tcp
+ * Sẽ ngay lập tức tạo ra file inputs.txt
  */
 
 #define INVALID_SOCKET -1
