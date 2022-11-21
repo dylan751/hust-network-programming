@@ -41,7 +41,7 @@ void udp_process(char *name)
     unsigned int clen = sizeof(caddr);
     baddr.sin_family = AF_INET;
     baddr.sin_port = htons(4000);
-    baddr.sin_addr.s_addr = inet_addr("10.70.255.255"); //
+    baddr.sin_addr.s_addr = inet_addr("255.255.255.255");
 
     saddr.sin_family = AF_INET;
     saddr.sin_port = htons(7000);
@@ -78,7 +78,7 @@ void tcp_process()
     fclose(f);
     int fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     SOCKADDR_IN saddr, caddr;
-    int clen = sizeof(caddr);
+    unsigned int clen = sizeof(caddr);
     saddr.sin_family = AF_INET;
     saddr.sin_port = htons(5000);
     saddr.sin_addr.s_addr = serveraddr.sin_addr.s_addr;
@@ -89,7 +89,6 @@ void tcp_process()
     {
         char buffer[1024] = {0};
         int n = recv(fd, buffer, sizeof(buffer) - 1, 0);
-        printf("%s\n", buffer);
         if (strcmp(buffer, "END") == 0)
         {
             break;
@@ -97,22 +96,68 @@ void tcp_process()
         else
         {
             sscanf(buffer, "%s", peers[peerCount]);
+            printf("%d: %s\n", peerCount, peers[peerCount]);
             peerCount += 1;
         }
     }
-    // NHAN INPUT TU BAN PHIM DE GUI
     char fname[1024] = {0};
     int index = 0;
     scanf("%s%d", fname, &index);
+    int cfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    saddr.sin_port = htons(8888);
+    saddr.sin_addr.s_addr = inet_addr(peers[index]);
+    connect(cfd, (SOCKADDR *)&saddr, sizeof(saddr));
 
-    // DOC FILE FNAME GUI DEN peers[index]
-    // NHU VAY CLIENT PHAI CO THEM 1 CHILD PROCESS DE NHAN DU LIEU TCP/8888
+    f = fopen(fname, "rb");
+    fseek(f, 0, SEEK_END);
+    int size = ftell(f);
+    char *data = (char *)calloc(size, 1);
+    fseek(f, 0, SEEK_SET);
+    fread(data, 1, size, f);
+    fclose(f);
+    int sent = 0; // Tổng số bytes đã gửi đi được
+    // Lặp đến khi tổng số byte đã gửi = kích thước dữ liệu
+    while (sent < size)
+    {
+        int tmp = send(cfd, data + sent, size - sent, 0);
+        sent += tmp;
+    }
+    close(cfd);
+    free(data);
+    data = NULL;
 }
 
-void file_recv_process()
+void file_rcv_process()
 {
     // LIEN TUC DOI TCP 8888
-    // ACCEPT -> RECV
+    // ACCEPT->RECV ( < 0) -> FILE
+    SOCKADDR_IN saddr, caddr;
+    unsigned int clen = sizeof(caddr);
+    saddr.sin_family = AF_INET;
+    saddr.sin_port = htons(8888);
+    saddr.sin_addr.s_addr = 0;
+    int sfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    bind(sfd, (SOCKADDR *)&saddr, sizeof(saddr));
+    listen(sfd, 10);
+    while (0 == 0)
+    {
+        printf("Waiting to receive file\n");
+        int cfd = accept(sfd, (SOCKADDR *)&caddr, &clen);
+        printf("Start receiving file\n");
+        FILE *f = fopen("output.dat", "wb");
+        while (0 == 0)
+        {
+            char buffer[1024] = {0};
+            int r = recv(cfd, buffer, sizeof(buffer), 0);
+            if (r > 0)
+            {
+                fwrite(buffer, 1, r, f);
+            }
+            else
+                break;
+        }
+        fclose(f);
+    }
 }
 
 int main()
@@ -137,7 +182,7 @@ int main()
         {
             if (fork() == 0)
             {
-                file_recv_process();
+                file_rcv_process();
             }
         }
     }
