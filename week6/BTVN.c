@@ -25,14 +25,23 @@
  * accept tạo một kết nối và trả về danh sách các <IP> và <TÊN> cho
  * client rồi đóng luôn kết nối.
  *
- * @brief Cách chạy chương trình
- * `./TCPEchoForkServer`: Khởi động server (listen ở port 9999)
- * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 9999` để Kết nối tới host: 127.0.0.1, port: 9999
+  * @brief Cách chạy chương trình
+ * `./BTVN`: Khởi động server (listen ở port 4000)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv -u 127.0.0.1 4000` để Kết nối tới host: 127.0.0.1, port: 4000, udp
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv -u -l 7000` để lắng nghe phản hồi ở cổng 7000
  * Lệnh: `lsof -PiTCP -sTCP:LISTEN`: Liệt kê các cổng đang chạy trên máy
- * Sang terminal mới, gõ chữ gì thì sẽ hiển thị trên terminal của server và nhận lại callback từ server (nhập mãi cho đến khi ấn nhập 'exit')*
- * Notes: Có thể mở nhiều client cùng kết nối tới 1 server (multi process)
+ * Nhập tên ở terminal cổng 4000 -> Sẽ tạo ra 1 file client.txt, chứa IP và tên mình
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 5000` để Kết nối tới host: 127.0.0.1, port: 5000, tcp
+ * Sẽ ngay lập tức tạo ra file inputs.txt
  * 
- * nc -vv -u -l 7000
+ * @brief Viết client
+ * Đợi người dùng nhập tên client từ bàn phím
+ * Gửi broadcast đến cổng 4000 (của server) (255.255.255.255)
+ * Nhận phản hồi của server ở cổng 7000, và tách IP của server
+ * Nối vào cổng 5000 (TCP) để nhận danh sách, hiện ra màn hình
+ * Đời người dùng nhận cú pháp
+   * <Tên file><Thứ tự của client trong danh sách>
+ * Bắt đầu một trình tự gửi file (Chưa cần làm)
  */
 
 #define INVALID_SOCKET -1
@@ -40,7 +49,7 @@
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 
-void signhandler(int signum)
+void sighandler(int signum)
 {
     int stat = 0;
     // Giải phóng các tiến trình con Zombie
@@ -77,10 +86,9 @@ void udp_process()
         sendto(fd, response, strlen(response), 0, (SOCKADDR *)&caddr, clen);
 
         // Lưu thông tin vào file
-        FILE *f = fopen("client.txt", "a+t");
+        FILE *f = fopen("cliens.txt", "a+t");
         fprintf(f, "%s %s\n", inet_ntoa(caddr.sin_addr), buffer); // Chuyển IP thành dạng đọc được
         fclose(f);
-        close(fd);
     }
 }
 
@@ -110,12 +118,13 @@ void tcp_process()
             send(cfd, buffer, strlen(buffer), 0);
         }
         fclose(f);
+        close(fd);
     }
 }
 
 int main()
 {
-    signal(SIGCHLD, signhandler);
+    signal(SIGCHLD, sighandler);
 
     // Tiến trình con thứ 1
     if (fork() == 0)
