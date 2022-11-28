@@ -23,8 +23,10 @@ int main()
 {
     pthread_t pid;
     void* status = NULL;
+
     // pthread_create(): Tạo 1 thread mới
-    pthread_create(&pid, NULL, my_func, NULL); // (Biến kết quả ra, , con trỏ hàm, )
+    // (thread_id: Kết quả ra, ..., con trỏ hàm tới nơi chứa logic của thread, tham số của hàm)
+    pthread_create(&pid, NULL, my_func, NULL); 
 
     // Nếu chỉ chạy ntn thì ko thấy in ra "Hello from my_func": 
     // Vì thread đó chưa kịp chạy thì thread main đã kết thúc r
