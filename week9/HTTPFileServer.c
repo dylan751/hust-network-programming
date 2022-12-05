@@ -62,8 +62,7 @@ int Compare(const struct dirent **a, const struct dirent **b)
 
 void *ClientThread(void *arg)
 {
-    char *rootPath = (char *)calloc(2, sizeof(char));
-    strcpy(rootPath, "");
+    char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n";
 
     int cfd = *((int *)arg);
     free(arg);
@@ -75,11 +74,22 @@ void *ClientThread(void *arg)
         int r = recv(cfd, buffer, sizeof(buffer), 0);
         if (r >= 0)
         {
+            char *rootPath = (char *)calloc(2, sizeof(char));
+            strcpy(rootPath, "");
             // buffer: Chứa GET Request của client gửi lên
             char GET[8] = {0};
             char PATH[1024] = {0}; // Đường dẫn mà client muốn lấy (Ex: /Application)
             // Tách nội dung GET Request client gửi lên
             sscanf(buffer, "%s%s", GET, PATH);
+        
+            // Nếu đường dẫn có dấu ' ' -> Bị chuyển thành '%20' -> Thay thế '%20' thành ' '
+            while (strstr(PATH, "%20") != NULL)
+            {
+                char *tmp = strstr(PATH, "%20");
+                // Biến đổi: "abc%20def" -> "abc def"
+                tmp[0] = ' ';
+                strcpy(tmp + 1, tmp + 3);
+            }
 
             Append(&rootPath, (char *)PATH);
 
@@ -93,11 +103,23 @@ void *ClientThread(void *arg)
             {
                 for (int i = 0; i < n; i++)
                 {
-                    char line[1024] = {0};
+                    char line[2048] = {0};
                     if (output[i]->d_type == DT_DIR)
-                        sprintf(line, "<a href= \"%s\"><b>%s</b></a>)", output[i]->d_name, output[i]->d_name);
+                    {
+                        // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
+                        if (PATH[strlen(PATH) - 1] == '/')
+                            sprintf(line, "<a href= \"%s%s\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                        else
+                            sprintf(line, "<a href= \"%s/%s\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                    }
                     if (output[i]->d_type == DT_REG)
-                        sprintf(line, "<a href= \"%s\"><i>%s</i></a>)", output[i]->d_name, output[i]->d_name);
+                    {
+                        // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
+                        if (PATH[strlen(PATH) - 1] == '/')
+                            sprintf(line, "<a href= \"%s%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                        else
+                            sprintf(line, "<a href= \"%s/%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                    }
                     Append(&html, line);
                     Append(&html, "<br>");
                 }
@@ -115,9 +137,17 @@ void *ClientThread(void *arg)
             }
 
             Append(&html, "</html>");
+            char header[1024] = {0};
+            sprintf(header, ok, strlen(html));
+
+            // Gửi Response header và html cho Client
+            send(cfd, header, strlen(header), 0);
             send(cfd, html, strlen(html), 0);
             free(html);
             html = NULL;
+
+            free(rootPath);
+            rootPath = NULL;
         }
         else
         {
@@ -126,8 +156,6 @@ void *ClientThread(void *arg)
         }
     }
     close(cfd);
-    free(rootPath);
-    rootPath = NULL;
     return NULL;
 }
 
