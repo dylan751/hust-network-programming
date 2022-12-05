@@ -20,7 +20,7 @@
  * - Lấy nội dung file mà user click vào trả về để client có thể download/play
  * POST
  * - Nhận file được upload lên server từ client
- * 
+ *
  * Bổ sung MIME Type cho ví dụ HTTP File Server
  * @return int
  */
@@ -65,136 +65,189 @@ int Compare(const struct dirent **a, const struct dirent **b)
         return 1;
 }
 
+const char *get_filename_ext(const char *filename)
+{
+    const char *dot = strrchr(filename, '.');
+    if (!dot || dot == filename)
+        return "";
+    return dot + 1;
+}
+
 void *ClientThread(void *arg)
 {
     int cfd = *((int *)arg);
     free(arg);
     arg = NULL;
     // Lien tuc nhan du lieu tu` Client
-    while (0 == 0)
+    char buffer[1024] = {0};
+    int r = recv(cfd, buffer, sizeof(buffer), 0);
+    if (r > 0)
     {
-        char buffer[1024] = {0};
-        int r = recv(cfd, buffer, sizeof(buffer), 0);
-        if (r >= 0)
+        char *rootPath = (char *)calloc(7, sizeof(char));
+        strcpy(rootPath, "");
+        // buffer: Chứa GET Request của client gửi lên
+        char GET[8] = {0};
+        char PATH[1024] = {0}; // Đường dẫn mà client muốn lấy (Ex: /Application)
+        // Tách nội dung GET Request client gửi lên
+        sscanf(buffer, "%s%s", GET, PATH);
+
+        // Nếu đường dẫn có dấu ' ' -> Bị chuyển thành '%20' -> Thay thế '%20' thành ' '
+        while (strstr(PATH, "%20") != NULL)
         {
-            char *rootPath = (char *)calloc(2, sizeof(char));
-            strcpy(rootPath, "");
-            // buffer: Chứa GET Request của client gửi lên
-            char GET[8] = {0};
-            char PATH[1024] = {0}; // Đường dẫn mà client muốn lấy (Ex: /Application)
-            // Tách nội dung GET Request client gửi lên
-            sscanf(buffer, "%s%s", GET, PATH);
+            char *tmp = strstr(PATH, "%20");
+            // Biến đổi: "abc%20def" -> "abc def"
+            tmp[0] = ' ';
+            strcpy(tmp + 1, tmp + 3);
+        }
 
-            // Nếu đường dẫn có dấu ' ' -> Bị chuyển thành '%20' -> Thay thế '%20' thành ' '
-            while (strstr(PATH, "%20") != NULL)
+        Append(&rootPath, (char *)PATH);
+
+        if (PATH[strlen(PATH) - 1] == '/')
+        {
+            char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n";
+            struct dirent **output = NULL;
+            char *html = NULL;
+            Append(&html, "<html>");
+
+            int n = scandir(rootPath, &output, NULL, Compare);
+
+            if (n > 0)
             {
-                char *tmp = strstr(PATH, "%20");
-                // Biến đổi: "abc%20def" -> "abc def"
-                tmp[0] = ' ';
-                strcpy(tmp + 1, tmp + 3);
-            }
-
-            Append(&rootPath, (char *)PATH);
-
-            if (PATH[strlen(PATH) - 1] == '/')
-            {
-                char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n";
-                struct dirent **output = NULL;
-                char *html = NULL;
-                Append(&html, "<html>");
-
-                int n = scandir(rootPath, &output, NULL, Compare);
-
-                if (n > 0)
+                for (int i = 0; i < n; i++)
                 {
-                    for (int i = 0; i < n; i++)
+                    char line[2048] = {0};
+                    if (output[i]->d_type == DT_DIR)
                     {
-                        char line[2048] = {0};
-                        if (output[i]->d_type == DT_DIR)
-                        {
-                            // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
-                            if (PATH[strlen(PATH) - 1] == '/')
-                                // Đối với thư mục -> thêm "/" vào cuối
-                                sprintf(line, "<a href= \"%s%s/\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
-                            else
-                                sprintf(line, "<a href= \"%s/%s/\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
-                        }
-                        if (output[i]->d_type == DT_REG)
-                        {
-                            // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
-                            if (PATH[strlen(PATH) - 1] == '/')
-                                sprintf(line, "<a href= \"%s%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
-                            else
-                                sprintf(line, "<a href= \"%s/%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
-                        }
-                        Append(&html, line);
-                        Append(&html, "<br>");
+                        // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
+                        if (PATH[strlen(PATH) - 1] == '/')
+                            // Đối với thư mục -> thêm "/" vào cuối
+                            sprintf(line, "<a href= \"%s%s/\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                        else
+                            sprintf(line, "<a href= \"%s/%s/\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
                     }
-                    for (int i = 0; i < n; i++)
+                    if (output[i]->d_type == DT_REG)
                     {
-                        free(output[i]);
-                        output[i] = NULL;
+                        // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
+                        if (PATH[strlen(PATH) - 1] == '/')
+                            sprintf(line, "<a href= \"%s%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                        else
+                            sprintf(line, "<a href= \"%s/%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
                     }
-                    free(output);
-                    output = NULL;
+                    Append(&html, line);
+                    Append(&html, "<br>");
                 }
-                else
+                for (int i = 0; i < n; i++)
                 {
-                    Append(&html, (char *)"EMPTY FOLDER<br>");
+                    free(output[i]);
+                    output[i] = NULL;
                 }
-
-                Append(&html, "</html>");
-                char header[1024] = {0};
-                sprintf(header, ok, strlen(html));
-
-                // Gửi Response header và html cho Client
-                send(cfd, header, strlen(header), 0);
-                send(cfd, html, strlen(html), 0);
-                free(html);
-                html = NULL;
+                free(output);
+                output = NULL;
             }
             else
             {
-                char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: application/octet-stream\r\n\r\n";
-                FILE *f = fopen(rootPath, "rb");
-                if (f != NULL)
-                {
-                    // Lấy kích thước file
-                    fseek(f, 0, SEEK_END);
-                    int fsize = ftell(f);
-                    fseek(f, 0, SEEK_SET);
-
-                    char header[1024] = {0};
-                    sprintf(header, ok, fsize);
-
-                    // Gửi Response header và html cho Client
-                    send(cfd, header, strlen(header), 0);
-                    char *data = (char *)calloc(fsize, 1);
-                    // Đọc toàn bộ dữ liệu vào file
-                    fread(data, 1, fsize, f);
-                    // Gửi dữ liệu cho Client
-                    send(cfd, data, fsize, 0);
-
-                    fclose(f);
-                    free(data);
-                    data = NULL;
-                }
-                else
-                {
-                    char *ok = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n";
-                    send(cfd, ok, strlen(ok), 0);
-                }
+                Append(&html, (char *)"EMPTY FOLDER<br>");
             }
 
-            free(rootPath);
-            rootPath = NULL;
+            Append(&html, "</html>");
+            char header[1024] = {0};
+            sprintf(header, ok, strlen(html));
+
+            // Gửi Response header và html cho Client
+            send(cfd, header, strlen(header), 0);
+            send(cfd, html, strlen(html), 0);
+            free(html);
+            html = NULL;
         }
         else
         {
-            // Neu kết nối bị đóng lại
-            break;
+            // Phân biệt file extension -> Để click vào file thì hiển thị nội dung File luôn
+            char *ok = NULL;
+            if (strcmp(get_filename_ext(rootPath), "c") == 0)
+            {
+                ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/plain\r\n\r\n";
+            }
+            else if (strcmp(get_filename_ext(rootPath), "png") == 0)
+            {
+                ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: image/png\r\n\r\n";
+            }
+            else if (strcmp(get_filename_ext(rootPath), "jpeg") == 0)
+            {
+                ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: image/png\r\n\r\n";
+            }
+            else if (strcmp(get_filename_ext(rootPath), "pdf") == 0)
+            {
+                ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: application/pdf\r\n\r\n";
+            }
+            else if (strcmp(get_filename_ext(rootPath), "mp4") == 0)
+            {
+                ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: video/mp4\r\n\r\n";
+            }
+            else
+                ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: application/octet-stream\r\n\r\n";
+
+            FILE *f = fopen(rootPath, "rb");
+            if (f != NULL)
+            {
+                // Lấy kích thước file
+                fseek(f, 0, SEEK_END);
+                int fsize = ftell(f);
+                fseek(f, 0, SEEK_SET);
+
+                char header[1024] = {0};
+                sprintf(header, ok, fsize);
+
+                // Gửi Response header và html cho Client
+                send(cfd, header, strlen(header), 0);
+                char *data = (char *)calloc(fsize, 1);
+                // Đọc toàn bộ dữ liệu vào file
+                fread(data, 1, fsize, f);
+                // Gửi dữ liệu cho Client
+                int sent = 0;
+                while (sent < fsize)
+                {
+
+                    int s = send(cfd, data + sent, fsize - sent, 0);
+                }
+
+                fclose(f);
+                free(data);
+                data = NULL;
+            }
+            else
+            {
+                if (strstr(rootPath, "favicon"))
+                {
+                    char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: application/octet-stream\r\n\r\n";
+                    FILE *f = fopen("/mnt/e/WSL/favicon.ico", "rb");
+                    if (f != NULL)
+                    {
+                        fseek(f, 0, SEEK_END);
+                        int fsize = ftell(f);
+                        fseek(f, 0, SEEK_SET);
+                        char header[1024] = {0};
+                        sprintf(header, ok, fsize);
+                        send(cfd, header, strlen(header), 0);
+                        char *data = (char *)calloc(fsize, 1);
+                        fread(data, 1, fsize, f);
+                        send(cfd, data, fsize, 0);
+                        fclose(f);
+                        free(data);
+                        data = NULL;
+                    }
+                }
+                else
+                {
+                    char *ok = "HTTP/1.1 404 NOT FOUND\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n";
+                    send(cfd, ok, strlen(ok), 0);
+                }
+            }
         }
+
+        free(rootPath);
+        rootPath = NULL;
     }
+
     close(cfd);
     return NULL;
 }
