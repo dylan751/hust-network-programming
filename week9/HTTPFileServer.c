@@ -13,17 +13,22 @@
 #include <pthread.h>
 
 /**
- * @file MultiThreadChatRoomServer.c
+ * @file HTTPFileServer.c
  * @brief Đề bài
- * Dùng thread để viết 1 TCP Server làm nhiệm vụ:
- * Đợi và nhận kết nối từ client ở cổng 5000
- * Nhận dữ liệu từ 1 client và forward dữ liệu này đến tất cả các client khác đã kết nối
+ * GET
+ * - Tạo nội dung HTML của thư mục hiện tại và trả về cho client
+ * - Lấy nội dung file mà user click vào trả về để client có thể download/play
+ * POST
+ * - Nhận file được upload lên server từ client
+ * 
+ * Bổ sung MIME Type cho ví dụ HTTP File Server
  * @return int
  */
 
+#define MAX_CONN_NUM 1024
+#define INVALID_SOCKET -1
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
-
 #define MAX_CLIENT 1024
 
 int g_cfd[MAX_CLIENT] = {0}; // Client file descriptior
@@ -154,7 +159,6 @@ void *ClientThread(void *arg)
                 FILE *f = fopen(rootPath, "rb");
                 if (f != NULL)
                 {
-
                     // Lấy kích thước file
                     fseek(f, 0, SEEK_END);
                     int fsize = ftell(f);
