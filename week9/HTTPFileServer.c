@@ -30,12 +30,52 @@ int g_cfd[MAX_CLIENT] = {0}; // Client file descriptior
 int g_count = 0;             // So luong client
 int sfd = 0;                 // Socket lễ tân
 
+void *ClientThread(void *arg)
+{
+    int cfd = *((int *)arg);
+    // Lien tuc nhan du lieu tu` Client
+    while (0 == 0)
+    {
+        char buffer[1024] = { 0 };
+        int r = recv(cfd, buffer, sizeof(buffer), 0);
+        if(r >= 0) {
+
+        } else {
+            // Neu kết nối bị đóng lại
+            break;
+        }
+    }
+    close(cfd);
+    return NULL;
+}
+
 int main()
 {
     sfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    SOCKADDR_IN saddr;
+    SOCKADDR_IN saddr, caddr;
+    unsigned int clen = sizeof(caddr);
     saddr.sin_port = htons(8888);
     saddr.sin_family = AF_INET;
     saddr.sin_addr.s_addr = 0;
-    bind(sfd, (SOCKADDR *)&saddr, sizeof(saddr));
+    int error = bind(sfd, (SOCKADDR *)&saddr, sizeof(saddr));
+    // Neu khong loi
+    if (error == 0)
+    {
+
+        listen(sfd, 10);
+
+        while (0 == 0)
+        {
+            int tmp = accept(sfd, (SOCKADDR *)&caddr, &clen);
+            g_cfd[g_count++] = tmp;
+            int *arg = (int *)calloc(1, sizeof(int));
+            *arg = tmp;
+            pthread_create(NULL, NULL, ClientThread, (void *)arg);
+        }
+    }
+    else
+    {
+        printf("PORT is already in used\n");
+        close(sfd);
+    }
 }
