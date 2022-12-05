@@ -62,8 +62,6 @@ int Compare(const struct dirent **a, const struct dirent **b)
 
 void *ClientThread(void *arg)
 {
-    char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n";
-
     int cfd = *((int *)arg);
     free(arg);
     arg = NULL;
@@ -81,7 +79,7 @@ void *ClientThread(void *arg)
             char PATH[1024] = {0}; // Đường dẫn mà client muốn lấy (Ex: /Application)
             // Tách nội dung GET Request client gửi lên
             sscanf(buffer, "%s%s", GET, PATH);
-        
+
             // Nếu đường dẫn có dấu ' ' -> Bị chuyển thành '%20' -> Thay thế '%20' thành ' '
             while (strstr(PATH, "%20") != NULL)
             {
@@ -93,58 +91,96 @@ void *ClientThread(void *arg)
 
             Append(&rootPath, (char *)PATH);
 
-            struct dirent **output = NULL;
-            char *html = NULL;
-            Append(&html, "<html>");
-
-            int n = scandir(rootPath, &output, NULL, Compare);
-
-            if (n > 0)
+            if (PATH[strlen(PATH) - 1] == '/')
             {
-                for (int i = 0; i < n; i++)
+                char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n";
+                struct dirent **output = NULL;
+                char *html = NULL;
+                Append(&html, "<html>");
+
+                int n = scandir(rootPath, &output, NULL, Compare);
+
+                if (n > 0)
                 {
-                    char line[2048] = {0};
-                    if (output[i]->d_type == DT_DIR)
+                    for (int i = 0; i < n; i++)
                     {
-                        // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
-                        if (PATH[strlen(PATH) - 1] == '/')
-                            sprintf(line, "<a href= \"%s%s\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
-                        else
-                            sprintf(line, "<a href= \"%s/%s\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                        char line[2048] = {0};
+                        if (output[i]->d_type == DT_DIR)
+                        {
+                            // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
+                            if (PATH[strlen(PATH) - 1] == '/')
+                                // Đối với thư mục -> thêm "/" vào cuối
+                                sprintf(line, "<a href= \"%s%s/\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                            else
+                                sprintf(line, "<a href= \"%s/%s/\"><b>%s</b></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                        }
+                        if (output[i]->d_type == DT_REG)
+                        {
+                            // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
+                            if (PATH[strlen(PATH) - 1] == '/')
+                                sprintf(line, "<a href= \"%s%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                            else
+                                sprintf(line, "<a href= \"%s/%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                        }
+                        Append(&html, line);
+                        Append(&html, "<br>");
                     }
-                    if (output[i]->d_type == DT_REG)
+                    for (int i = 0; i < n; i++)
                     {
-                        // Nếu không phải root '/', thì thêm '/' vào giữa các PATH
-                        if (PATH[strlen(PATH) - 1] == '/')
-                            sprintf(line, "<a href= \"%s%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
-                        else
-                            sprintf(line, "<a href= \"%s/%s\"><i>%s</i></a>)", PATH, output[i]->d_name, output[i]->d_name);
+                        free(output[i]);
+                        output[i] = NULL;
                     }
-                    Append(&html, line);
-                    Append(&html, "<br>");
+                    free(output);
+                    output = NULL;
                 }
-                for (int i = 0; i < n; i++)
+                else
                 {
-                    free(output[i]);
-                    output[i] = NULL;
+                    Append(&html, (char *)"EMPTY FOLDER<br>");
                 }
-                free(output);
-                output = NULL;
+
+                Append(&html, "</html>");
+                char header[1024] = {0};
+                sprintf(header, ok, strlen(html));
+
+                // Gửi Response header và html cho Client
+                send(cfd, header, strlen(header), 0);
+                send(cfd, html, strlen(html), 0);
+                free(html);
+                html = NULL;
             }
             else
             {
-                Append(&html, (char *)"EMPTY FOLDER<br>");
+                char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: application/octet-stream\r\n\r\n";
+                FILE *f = fopen(rootPath, "rb");
+                if (f != NULL)
+                {
+
+                    // Lấy kích thước file
+                    fseek(f, 0, SEEK_END);
+                    int fsize = ftell(f);
+                    fseek(f, 0, SEEK_SET);
+
+                    char header[1024] = {0};
+                    sprintf(header, ok, fsize);
+
+                    // Gửi Response header và html cho Client
+                    send(cfd, header, strlen(header), 0);
+                    char *data = (char *)calloc(fsize, 1);
+                    // Đọc toàn bộ dữ liệu vào file
+                    fread(data, 1, fsize, f);
+                    // Gửi dữ liệu cho Client
+                    send(cfd, data, fsize, 0);
+
+                    fclose(f);
+                    free(data);
+                    data = NULL;
+                }
+                else
+                {
+                    char *ok = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n";
+                    send(cfd, ok, strlen(ok), 0);
+                }
             }
-
-            Append(&html, "</html>");
-            char header[1024] = {0};
-            sprintf(header, ok, strlen(html));
-
-            // Gửi Response header và html cho Client
-            send(cfd, header, strlen(header), 0);
-            send(cfd, html, strlen(html), 0);
-            free(html);
-            html = NULL;
 
             free(rootPath);
             rootPath = NULL;
