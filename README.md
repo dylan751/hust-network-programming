@@ -8,7 +8,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/muoi07052001/network-programming">
+  <a href="https://github.com/muoi07052001/hust-network-programming">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -17,14 +17,14 @@
   <p align="center">
     The source code of the Network Programming Subject (Learn in Hanoi University of Science and Technology)
     <br />
-    <a href="https://github.com/muoi07052001/network-programming"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/muoi07052001/hust-network-programming"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/muoi07052001/network-programming">View Repo</a>
+    <a href="https://github.com/muoi07052001/hust-network-programming">View Repo</a>
     ·
-    <a href="https://github.com/muoi07052001/network-programming/issues">Report Bug</a>
+    <a href="https://github.com/muoi07052001/hust-network-programming/issues">Report Bug</a>
     ·
-    <a href="https://github.com/muoi07052001/network-programming/issues">Request Feature</a>
+    <a href="https://github.com/muoi07052001/hust-network-programming/issues">Request Feature</a>
   </p>
 </div>
 
@@ -89,7 +89,7 @@ brew cleanup
 ### Installation
 
 ```sh
-git clone https://github.com/muoi07052001/network-programming.git
+git clone https://github.com/muoi07052001/hust-network-programming.git
 ```
 
 <p align="right">(<a href="#readme-top">Back to top</a>)</p>
@@ -136,7 +136,7 @@ gcc <file_name.c> -o <output_file_name>
 - [x] Multi-process
   - [x] Echo Fork Server
 
-See the [open issues](https://github.com/muoi07052001/network-programming/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/muoi07052001/hust-network-programming/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">Back to top</a>)</p>
 
@@ -163,7 +163,7 @@ Don't forget to give the project a star! Thanks again!
 
 Nguyen Hai Duong - [@facebook_handle](https://www.facebook.com/duong.nguyenhai.7140/) - muoi07052001@gmail.com
 
-Project Link: [https://github.com/muoi07052001/network-programming](https://github.com/muoi07052001/network-programming)
+Project Link: [https://github.com/muoi07052001/hust-network-programming](https://github.com/muoi07052001/hust-network-programming)
 
 <p align="right">(<a href="#readme-top">Back to top</a>)</p>
 
@@ -178,16 +178,16 @@ Project Link: [https://github.com/muoi07052001/network-programming](https://gith
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/muoi07052001/network-programming.svg?style=for-the-badge
-[contributors-url]: https://github.com/muoi07052001/network-programming/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/muoi07052001/network-programming.svg?style=for-the-badge
-[forks-url]: https://github.com/muoi07052001/network-programming/network/members
-[stars-shield]: https://img.shields.io/github/stars/muoi07052001/network-programming.svg?style=for-the-badge
-[stars-url]: https://github.com/muoi07052001/network-programming/stargazers
-[issues-shield]: https://img.shields.io/github/issues/muoi07052001/network-programming.svg?style=for-the-badge
-[issues-url]: https://github.com/muoi07052001/network-programming/issues
-[license-shield]: https://img.shields.io/github/license/muoi07052001/network-programming.svg?style=for-the-badge
-[license-url]: https://github.com/muoi07052001/network-programming/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/muoi07052001/hust-network-programming.svg?style=for-the-badge
+[contributors-url]: https://github.com/muoi07052001/hust-network-programming/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/muoi07052001/hust-network-programming.svg?style=for-the-badge
+[forks-url]: https://github.com/muoi07052001/hust-network-programming/network/members
+[stars-shield]: https://img.shields.io/github/stars/muoi07052001/hust-network-programming.svg?style=for-the-badge
+[stars-url]: https://github.com/muoi07052001/hust-network-programming/stargazers
+[issues-shield]: https://img.shields.io/github/issues/muoi07052001/hust-network-programming.svg?style=for-the-badge
+[issues-url]: https://github.com/muoi07052001/hust-network-programming/issues
+[license-shield]: https://img.shields.io/github/license/muoi07052001/hust-network-programming.svg?style=for-the-badge
+[license-url]: https://github.com/muoi07052001/hust-network-programming/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/nguyen-duong-072879247/
 [product-screenshot]: images/product-screenshot.png
