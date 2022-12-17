@@ -108,7 +108,7 @@ int main()
                 tmpPath[strlen(tmpPath) - 1] = 0; // Cắt dấu "/" ở cuối đi
                 while (tmpPath[strlen(tmpPath) - 1] != '/')
                 {
-                    tmpPath[strlen(tmpPath) - 1] = 0; // Cắt dấu "/" ở cuối đi cho đến root path
+                    tmpPath[strlen(tmpPath) - 1] = 0; // Cắt từng ký tự trong tên thư mục đi cho đến "/" tiếp theo -> thoát ra thư mục cha
                 }
             }
         }

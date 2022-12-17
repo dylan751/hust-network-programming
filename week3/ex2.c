@@ -21,10 +21,10 @@
 
 int main(int argc, char **argv)
 {
-    // if (argc > 1)
+    if (argc > 1)
     {
-        // char *domain = argv[1];
-        char *domain = "vnexpress.net";
+        char *domain = argv[1];
+        // char *domain = "vnexpress.net";
         struct hostent *presult = gethostbyname(domain); // presult: Pointer Result
         if (presult != NULL)
         {
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
                 char *addr = host.h_addr_list[count]; // 4 bytes địa chỉ IP
                 memcpy(&inaddr, addr, sizeof(inaddr));
                 // Chuyển đổi addr -> ASCII cho dễ đọc
-                char *saddr = inet_ntoa(inaddr);
+                char *saddr = inet_ntoa(inaddr); // ntoa: Net to Address
                 printf("%s\n", saddr);
                 count += 1;
             }
