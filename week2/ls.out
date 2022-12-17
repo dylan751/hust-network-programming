@@ -1,10 +1,11 @@
-total 176
-drwxr-xr-x  9 duongnh  staff    288 Oct 17 09:15 .
-drwxr-xr-x  7 duongnh  staff    224 Oct 17 08:43 ..
--rwxr-xr-x  1 duongnh  staff  34016 Oct 17 09:14 ex1
--rw-r--r--@ 1 duongnh  staff   1934 Oct 17 09:14 ex1.c
--rwxr-xr-x  1 duongnh  staff  33984 Oct 17 09:15 ex2
--rw-r--r--  1 duongnh  staff   1640 Oct 17 09:15 ex2.c
-drwxr-xr-x  3 duongnh  staff     96 Oct 17 09:08 ex2.dSYM
--rw-r--r--  1 duongnh  staff   4415 Oct 17 09:14 ifconfig.out
--rw-r--r--  1 duongnh  staff      0 Oct 17 09:15 ls.out
+total 256
+drwxr-xr-x  10 duongnh  staff    320 Dec 17 10:03 .
+drwxr-xr-x  18 duongnh  staff    576 Dec 17 10:08 ..
+-rwxr-xr-x   1 duongnh  staff  34016 Dec 17 10:03 ex1
+-rw-r--r--@  1 duongnh  staff   2604 Dec 17 10:06 ex1.c
+-rwxr-xr-x   1 duongnh  staff  33984 Oct 17 09:15 ex2
+-rw-r--r--@  1 duongnh  staff   1640 Oct 17 09:15 ex2.c
+-rwxr-xr-x   1 duongnh  staff  33712 Oct 17 09:55 ex3
+-rw-r--r--@  1 duongnh  staff   1308 Oct 17 09:55 ex3.c
+-rw-r--r--   1 duongnh  staff   4641 Dec 17 10:03 ifconfig.out
+-rw-r--r--   1 duongnh  staff      0 Dec 17 10:21 ls.out

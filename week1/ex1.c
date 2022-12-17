@@ -3,7 +3,7 @@
 /**
  * @brief Đề bài
  * Nhập 1 số float
- * In ra 4 bytes đầu tiên của số đó
+ * In ra 4 bytes đầu tiên của địa chỉ của số đó
  */
 int main()
 {

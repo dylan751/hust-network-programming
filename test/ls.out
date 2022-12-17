@@ -1,0 +1,6 @@
+total 80
+drwxr-xr-x   5 duongnh  staff    160 Dec 17 10:22 .
+drwxr-xr-x  18 duongnh  staff    576 Dec 17 10:08 ..
+-rw-r--r--   1 duongnh  staff      0 Dec 17 10:22 ls.out
+-rwxr-xr-x   1 duongnh  staff  33905 Dec 17 10:22 test
+-rw-r--r--   1 duongnh  staff   1379 Dec 17 10:22 test.c

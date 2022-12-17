@@ -10,6 +10,16 @@
  * -> phân tích và in ra màn hình tất cả các địa chỉ IPv4 của máy có trong kết quả ifconfig
  */
 
+/**
+ * @brief Bug, vấn đề
+ * Do trên mac M1 khi chạy "ifconfig" ra output file ifconfig.out khác ubuntu -> có bug
+ * Nguyên nhân: Không phải tất cả adapter (lo0, en0, ...) đều có thuộc tính inet
+ * 1. Theo logic code, khi ko tìm đc inet của adapter này nó sẽ nhảy đến inet của cái sau -> in ra output sai
+ * 2. Khi chạm đến adapterName "bridge0" -> từ đó đến hết file không còn cụm từ "inet" nữa -> mình cho break vòng lặp
+ * để tránh lặp vô hạn (vì không tìm đc "inet" nữa lên nếu không có `break` ở dòng 72 sẽ bị lặp vô hạn)
+ * 
+ * @return int 
+ */
 int main()
 {
     system("ifconfig > ifconfig.out");
@@ -59,6 +69,7 @@ int main()
         else
         {
             printf("%s IPv4 not available", adapterName);
+            break;
         }
     }
 

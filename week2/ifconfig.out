@@ -6,24 +6,24 @@ lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
 	nd6 options=201<PERFORMNUD,DAD>
 gif0: flags=8010<POINTOPOINT,MULTICAST> mtu 1280
 stf0: flags=0<> mtu 1280
-anpi2: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	options=400<CHANNEL_IO>
-	ether aa:6a:e5:54:e8:0b 
-	inet6 fe80::a86a:e5ff:fe54:e80b%anpi2 prefixlen 64 scopeid 0x4 
-	nd6 options=201<PERFORMNUD,DAD>
-	media: none
-	status: inactive
 anpi0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	options=400<CHANNEL_IO>
 	ether aa:6a:e5:54:e8:09 
-	inet6 fe80::a86a:e5ff:fe54:e809%anpi0 prefixlen 64 scopeid 0x5 
+	inet6 fe80::a86a:e5ff:fe54:e809%anpi0 prefixlen 64 scopeid 0x4 
 	nd6 options=201<PERFORMNUD,DAD>
 	media: none
 	status: inactive
 anpi1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	options=400<CHANNEL_IO>
 	ether aa:6a:e5:54:e8:0a 
-	inet6 fe80::a86a:e5ff:fe54:e80a%anpi1 prefixlen 64 scopeid 0x6 
+	inet6 fe80::a86a:e5ff:fe54:e80a%anpi1 prefixlen 64 scopeid 0x5 
+	nd6 options=201<PERFORMNUD,DAD>
+	media: none
+	status: inactive
+anpi2: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=400<CHANNEL_IO>
+	ether aa:6a:e5:54:e8:0b 
+	inet6 fe80::a86a:e5ff:fe54:e80b%anpi2 prefixlen 64 scopeid 0x6 
 	nd6 options=201<PERFORMNUD,DAD>
 	media: none
 	status: inactive
@@ -68,8 +68,11 @@ ap1: flags=8802<BROADCAST,SIMPLEX,MULTICAST> mtu 1500
 en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	options=6463<RXCSUM,TXCSUM,TSO4,TSO6,CHANNEL_IO,PARTIAL_CSUM,ZEROINVERT_CSUM>
 	ether 88:4d:7c:a6:37:3a 
-	inet6 fe80::10f8:1919:bd6f:1940%en0 prefixlen 64 secured scopeid 0xe 
-	inet 192.168.70.19 netmask 0xffffff00 broadcast 192.168.70.255
+	inet6 fe80::1c13:25ae:7a2f:bd70%en0 prefixlen 64 secured scopeid 0xe 
+	inet6 2405:4803:feb0:c860:14c1:6fbb:b1bb:ab49 prefixlen 64 autoconf secured 
+	inet6 2405:4803:feb0:c860:c5bd:90e4:449d:cd2 prefixlen 64 autoconf temporary 
+	inet 192.168.1.66 netmask 0xffffff00 broadcast 192.168.1.255
+	inet6 2405:4803:feb0:c860:ffff:ffff:ffff:ffb8 prefixlen 64 dynamic 
 	nd6 options=201<PERFORMNUD,DAD>
 	media: autoselect
 	status: active
@@ -92,23 +95,23 @@ bridge0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	status: inactive
 awdl0: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
 	options=400<CHANNEL_IO>
-	ether 0a:41:17:4e:52:ef 
-	inet6 fe80::841:17ff:fe4e:52ef%awdl0 prefixlen 64 scopeid 0x10 
+	ether 36:d9:84:ab:ea:d4 
+	inet6 fe80::34d9:84ff:feab:ead4%awdl0 prefixlen 64 scopeid 0x10 
 	nd6 options=201<PERFORMNUD,DAD>
 	media: autoselect
 	status: active
 llw0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	options=400<CHANNEL_IO>
-	ether 0a:41:17:4e:52:ef 
-	inet6 fe80::841:17ff:fe4e:52ef%llw0 prefixlen 64 scopeid 0x11 
+	ether 36:d9:84:ab:ea:d4 
+	inet6 fe80::34d9:84ff:feab:ead4%llw0 prefixlen 64 scopeid 0x11 
 	nd6 options=201<PERFORMNUD,DAD>
 	media: autoselect
 	status: active
 utun0: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1380
-	inet6 fe80::8dd5:3941:f17f:f726%utun0 prefixlen 64 scopeid 0x12 
+	inet6 fe80::21ad:9ca2:c5ba:36aa%utun0 prefixlen 64 scopeid 0x12 
 	nd6 options=201<PERFORMNUD,DAD>
 utun1: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 2000
-	inet6 fe80::8753:469c:16c5:a4bc%utun1 prefixlen 64 scopeid 0x13 
+	inet6 fe80::f1be:4997:784c:fbf8%utun1 prefixlen 64 scopeid 0x13 
 	nd6 options=201<PERFORMNUD,DAD>
 utun2: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1000
 	inet6 fe80::ce81:b1c:bd2c:69e%utun2 prefixlen 64 scopeid 0x14 

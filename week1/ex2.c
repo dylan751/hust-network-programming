@@ -13,12 +13,13 @@ int main()
     int dem = 0;
     float *x = NULL;
 
+    printf("Input numbers (exit when you input 0): ");
     do
     {
         scanf("%f", &tmp);
         if (tmp != 0)
         {
-            x = (float *)realloc(x, (dem + 1) * sizeof(float)); // (Vùng nhớ cũ, thêm bao nhiêu vùng nhớ)
+            x = (float *)realloc(x, (dem + 1) * sizeof(float)); // realloc(Vùng nhớ cũ, thêm bao nhiêu vùng nhớ)
             x[dem] = tmp;
             dem += 1;
         }
@@ -26,7 +27,7 @@ int main()
 
     for (int i = 0; i < dem; i++)
     {
-        printf("%.2f", x[i]);
+        printf("%.2f\n", x[i]);
     }
 
     free(x);
