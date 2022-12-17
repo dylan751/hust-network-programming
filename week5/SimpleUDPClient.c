@@ -14,8 +14,8 @@
  * Nhận lại dữ liệu callback từ Server
  *
  * @brief Cách chạy chương trình
- * `./simpleUDPClient`: Khởi động server (listen ở port 6101)
- * Mở 1 terminal mới, `./simpleTCPClient`: Khởi động client
+ * `./simpleUDPServer`: Khởi động server (listen ở port 6101)
+ * Mở 1 terminal mới, `./simpleUDPClient`: Khởi động client
  * Gõ chữ vào client -> Check server xem có nhận được không
  * Check Client xem có nhận lại `ACK: Call back` từ Server không
  *
