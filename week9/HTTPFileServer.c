@@ -21,6 +21,12 @@
  * POST
  * - Nhận file được upload lên server từ client
  *
+ * @brief Cách chạy chương trình
+ * `./HTTPFileServer`: Khởi động server (listen ở port 8888)
+ * Mở Browser, gõ `http://localhost:8888` -> hiển thị ra cấu trúc thư mục root
+ * Ấn vào từng thư mục để navigate giữa các thư mục
+ * Ấn vào các định dạng file để đọc (hoặc download nếu ko đc định nghĩa đuôi file trong đuôi)
+ *
  * Bổ sung MIME Type cho ví dụ HTTP File Server
  * @return int
  */

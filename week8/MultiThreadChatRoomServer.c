@@ -16,9 +16,13 @@
  * @file MultiThreadChatRoomServer.c
  * @brief Đề bài
  * Dùng thread để viết 1 TCP Server làm nhiệm vụ:
- * Đợi và nhận kết nối từ client ở cổng 5000
+ * Đợi và nhận kết nối từ client ở cổng 6000
  * Nhận dữ liệu từ 1 client và forward dữ liệu này đến tất cả các client khác đã kết nối
- * @return int
+ *
+ * @brief Cách chạy chương trình
+ * `./MultiThreadChatRoomServer`: Khởi động server (listen ở port 6000)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 6000` để Kết nối tới host: 127.0.0.1, port: 6000
+ * Gõ chữ gì thì sẽ echo về client, đồng thời hiển thị "Received: ..." trên terminal của server
  */
 
 typedef struct sockaddr_in SOCKADDR_IN;
@@ -53,7 +57,7 @@ int main()
     SOCKADDR_IN saddr, caddr;
     unsigned int clen = sizeof(caddr);
     saddr.sin_family = AF_INET;
-    saddr.sin_port = htons(5000);
+    saddr.sin_port = htons(6000);
     saddr.sin_addr.s_addr = 0;
     bind(sfd, (SOCKADDR *)&saddr, sizeof(saddr));
     listen(sfd, 10);
