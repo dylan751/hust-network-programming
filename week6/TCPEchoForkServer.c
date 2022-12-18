@@ -26,7 +26,7 @@
  * `./TCPEchoForkServer`: Khởi động server (listen ở port 9999)
  * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 9999` để Kết nối tới host: 127.0.0.1, port: 9999
  * Lệnh: `lsof -PiTCP -sTCP:LISTEN`: Liệt kê các cổng đang chạy trên máy
- * Sang terminal mới, gõ chữ gì thì sẽ hiển thị trên terminal của server và nhận lại callback từ server (nhập mãi cho đến khi ấn nhập 'exit')*
+ * Sang terminal mới, gõ chữ gì thì sẽ hiển thị trên terminal của server và nhận lại callback từ server
  * Notes: Có thể mở nhiều client cùng kết nối tới 1 server (multi process)
  */
 
@@ -53,7 +53,7 @@ void signal_handler(int signum)
             for (int i = 0; i < g_clientcount; i++)
             {
                 char feedback[1024] = {0};
-                FILE* f = fopen("data.tmp", "rt");
+                FILE *f = fopen("data.tmp", "rt");
                 fgets(feedback, sizeof(feedback), f);
                 printf("%s\n", feedback);
                 fclose(f);
@@ -72,6 +72,7 @@ int main()
     int parent_id = getpid();
     /* --- For SIGNUM references, reads slide Chapter 5 */
     // Ctrl-C sends an INT signal ("interrupt", SIGINT)
+    // SIGINT = Ctrl + C
     signal(SIGINT, signal_handler);
     // Khi 1 tiến trình con kết thúc, nó sẽ gửi tín hiệu SIGCHLD tới tiến trình cha
     signal(SIGCHLD, signal_handler);
@@ -101,7 +102,7 @@ int main()
                 {
                     printf("Received: %s\n", buffer);
                     send(cfd, buffer, strlen(buffer), 0);
-                    FILE* f = fopen("data.tmp", "w");
+                    FILE *f = fopen("data.tmp", "w");
                     fprintf(f, "%s", buffer);
                     fclose(f);
                     // SIGQUEUE de bao server - KILL(PID, SIGNUM)
