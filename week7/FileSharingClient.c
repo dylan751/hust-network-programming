@@ -66,7 +66,7 @@ void udp_process(char *name)
 
 void tcp_process()
 {
-    printf("Waiting for server adress...\n");
+    printf("Waiting for server address...\n");
     while (!hasServerAdress)
     {
         sleep(100);

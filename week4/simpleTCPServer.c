@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     int sfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sfd != INVALID_SOCKET)
     {
-        SOCKADDR_IN saddr, caddr; // saddr: Socket address, caddr: Client address
+        SOCKADDR_IN saddr, caddr; // saddr: Server address, caddr: Client address
         unsigned int clen = sizeof(caddr);
         // Cấu hình địa chỉ socket
         saddr.sin_family = AF_INET;   // = AF_INET -> Dùng IPv4
