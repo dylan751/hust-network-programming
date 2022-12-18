@@ -30,6 +30,7 @@
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 
+// Gửi đến khi nào hết nội dung (đề phòng trường hợp lỗi)
 int SendPacket(int fd, char *data, int len)
 {
     int sent = 0;
@@ -40,6 +41,7 @@ int SendPacket(int fd, char *data, int len)
     return sent;
 }
 
+// Nhận đến khi nào hết nội dung (đề phòng trường hợp lỗi)
 int RecvPacket(int fd, char *data, int maxlen)
 {
     int received = 0;
@@ -79,6 +81,7 @@ int main(int argc, char **argv)
                 {
                     break;
                 }
+                // Xoá dấu Enter ở cuối
                 while (buffer[strlen(buffer) - 1] == '\n')
                 {
                     buffer[strlen(buffer) - 1] = 0;

@@ -12,7 +12,7 @@
  * @file UDPChatServer.c
  * @brief Đề bài
  * Tạo 1 UDP Server để lắng nghe ở port 5000
- * Kết nối tới server -> Broadcast nội dung chat tới tất cả các máy
+ * Kết nối tới server -> Broadcast nội dung chat tới port 7000
  *
  * @brief Cách chạy chương trình
  * `./UDPChatServer`: Khởi động server (listen ở port 5000)

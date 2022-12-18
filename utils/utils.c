@@ -1,3 +1,28 @@
+// Gửi đến khi nào hết nội dung (đề phòng trường hợp lỗi)
+int SendPacket(int fd, char *data, int len)
+{
+    int sent = 0;
+    do
+    {
+        sent += send(fd, data + sent, len - sent, 0);
+    } while (sent >= 0 && sent < len);
+    return sent;
+}
+
+// Nhận đến khi nào hết nội dung (đề phòng trường hợp lỗi)
+int RecvPacket(int fd, char *data, int maxlen)
+{
+    int received = 0;
+    int block_size = 2;
+    int tmp = 0;
+    do
+    {
+        tmp = recv(fd, data + received, block_size, 0);
+        received += tmp;
+    } while (received >= 0 && received < maxlen && tmp == block_size);
+    return received;
+}
+
 // Hàm nối 1 xâu vào 1 xâu khác
 void Append(char **pdst, const char *src)
 {
