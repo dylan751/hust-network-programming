@@ -25,7 +25,7 @@
  * accept tạo một kết nối và trả về danh sách các <IP> và <TÊN> cho
  * client rồi đóng luôn kết nối.
  *
-  * @brief Cách chạy chương trình
+ * @brief Cách chạy chương trình
  * `./FileSharing1`: Khởi động server (listen ở port 4000)
  * Mở 1 terminal mới, gõ lệnh: `nc -vv -u 127.0.0.1 4000` để Kết nối tới host: 127.0.0.1, port: 4000, udp
  * Mở 1 terminal mới, gõ lệnh: `nc -vv -u -l 7000` để lắng nghe phản hồi ở cổng 7000
@@ -33,14 +33,14 @@
  * Nhập tên ở terminal cổng 4000 -> Sẽ tạo ra 1 file client.txt, chứa IP và tên mình
  * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 5000` để Kết nối tới host: 127.0.0.1, port: 5000, tcp
  * Sẽ ngay lập tức tạo ra file inputs.txt
- * 
+ *
  * @brief Viết client
  * Đợi người dùng nhập tên client từ bàn phím
  * Gửi broadcast đến cổng 4000 (của server) (255.255.255.255)
  * Nhận phản hồi của server ở cổng 7000, và tách IP của server
  * Nối vào cổng 5000 (TCP) để nhận danh sách, hiện ra màn hình
  * Đời người dùng nhận cú pháp
-   * <Tên file><Thứ tự của client trong danh sách>
+ * <Tên file><Thứ tự của client trong danh sách>
  * Bắt đầu một trình tự gửi file (Chưa cần làm)
  */
 
@@ -51,10 +51,10 @@ typedef struct sockaddr SOCKADDR;
 
 void sighandler(int signum)
 {
-    int stat = 0;
-    // Giải phóng các tiến trình con Zombie
-    while (waitpid(-1, &stat, WNOHANG) > 0)
-        ;
+    // int stat = 0;
+    // // Giải phóng các tiến trình con Zombie
+    // while (waitpid(-1, &stat, WNOHANG) > 0)
+    //     ;
 }
 
 void udp_process()
