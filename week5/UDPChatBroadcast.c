@@ -32,9 +32,9 @@ int main()
     int num = 0;
     unsigned int clen = sizeof(caddr);
 
-    saddr.sin_family = AF_INET;
-    saddr.sin_port = htons(7000);
-    saddr.sin_addr.s_addr = inet_addr("255.255.255.255");
+    baddr.sin_family = AF_INET;
+    baddr.sin_port = htons(7000);
+    baddr.sin_addr.s_addr = inet_addr("255.255.255.255");
 
     saddr.sin_family = AF_INET;
     saddr.sin_port = htons(5000);
