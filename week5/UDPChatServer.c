@@ -53,7 +53,7 @@ int main()
             if (strncmp(buffer, "REG", 3) == 0)
             {
                 client[num++] = caddr;
-                printf("REG: %d: %d\n", num - 1, caddr.sin_addr.s_addr);
+                printf("REG number: %d - s_addr: %d\n", num - 1, caddr.sin_addr.s_addr);
             }
             else if (strncmp(buffer, "CHAT", 4) == 0)
             {

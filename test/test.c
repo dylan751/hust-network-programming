@@ -1,6 +1,12 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <dirent.h>
 #include <string.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 /**
  * @brief Đề bài
@@ -14,38 +20,46 @@
  * ..
  */
 
+typedef struct sockaddr SOCKADDR;
+typedef struct sockaddr_in SOCKADDR_IN;
+
 int main()
 {
-    system("ls -a -l > ls.out");
+    int s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
-    FILE *f = fopen("ls.out", "rt");
+    SOCKADDR_IN saddr, caddr, ackaddr;
+    SOCKADDR_IN client[1024];
+    unsigned int clen = sizeof(caddr);
+    int client_count = 0;
 
-    while (!feof(f))
+    saddr.sin_family = AF_INET;
+    saddr.sin_port = htons(5000);
+    saddr.sin_addr.s_addr = 0;
+
+    bind(s, (SOCKADDR *)&saddr, sizeof(saddr));
+
+    while (1)
     {
-        char line[1024];
-        memset(line, 0, sizeof(line));
-        fgets(line, sizeof(line), f);
 
-        if (line[0] == '-')
+        char buffer[1024] = {0};
+        int r = recvfrom(s, buffer, sizeof(buffer), 0, (SOCKADDR *)&caddr, &clen);
+        if (r > 0)
         {
-
-            char permission[1024] = {0};
-            char v1[1024] = {0};
-            char owner[1024] = {0};
-            char group[1024] = {0};
-            char size[1024] = {0};
-            char month[1024] = {0};
-            char date[1024] = {0};
-            char time[1024] = {0};
-            char name[1024] = {0};
-
-            sscanf(line, "%s%s%s%s%s%s%s%s%s", permission, v1, owner, group, size, month, date, time, name);
-            while (name[strlen(name) - 1] == '\n' || name[strlen(name) - 1] == '\r')
+            printf("%s\n", buffer);
+            if (strncmp(buffer, "REG", 3) == 0)
             {
-                name[strlen(name) - 1] = 0;
+                client[client_count] = caddr;
+                client_count++;
+                printf("REG number: %d - s_addr: %d\n", client_count - 1, caddr.sin_addr.s_addr);
             }
-
-            printf("%s %s\n", name, size);
+            if (strncmp(buffer, "CHAT", 4) == 0)
+            {
+                for (int i = 0; i < client_count; i++)
+                {
+                    client[i].sin_port = htons(7000);
+                    sendto(s, buffer, sizeof(buffer), 0, (SOCKADDR *)&client[i], sizeof(client[i]));
+                }
+            }
         }
     }
 }
