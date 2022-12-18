@@ -108,6 +108,7 @@ void *ClientThread(void *arg)
 
         Append(&rootPath, (char *)PATH);
 
+        // Nếu cuối PATH có '/' -> là folder -> thực hiện navigate vào folder đó
         if (PATH[strlen(PATH) - 1] == '/')
         {
             char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n";
@@ -165,6 +166,7 @@ void *ClientThread(void *arg)
             free(html);
             html = NULL;
         }
+        // Nếu cuối PATH ko có '/' -> là file -> xử lý theo file extension
         else
         {
             // Phân biệt file extension -> Để click vào file thì hiển thị nội dung File luôn
@@ -214,6 +216,10 @@ void *ClientThread(void *arg)
                 {
 
                     int s = send(cfd, data + sent, fsize - sent, 0);
+                    if (s <= 0)
+                        break;
+                    else
+                        sent += s;
                 }
 
                 fclose(f);
@@ -225,7 +231,7 @@ void *ClientThread(void *arg)
                 if (strstr(rootPath, "favicon"))
                 {
                     char *ok = "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: application/octet-stream\r\n\r\n";
-                    FILE *f = fopen("/mnt/e/WSL/favicon.ico", "rb");
+                    FILE *f = fopen("/Users/duongnh/Documents/BachKhoa/favicon.ico", "rb");
                     if (f != NULL)
                     {
                         fseek(f, 0, SEEK_END);
