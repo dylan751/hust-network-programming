@@ -3,11 +3,16 @@
   - socket()
   - connect()
   - bind()
+  - accept()
+  - send()
+  - recv()
+
+- TCP
   - send()
   - recv()
 
 - UDP
-  - sentTo()
+  - sendto()
   - recvFrom()
 
 - Multi thread

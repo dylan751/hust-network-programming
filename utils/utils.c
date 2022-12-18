@@ -1,3 +1,11 @@
+/**
+ * strstr(str, target): Search if 'str' contains 'target' -> move pointer to the first char of the 'target'
+ * strncmp(str1, str2, byte_num): compare first 'byte_num' bytes of the 'str1' to 'str2'
+ * scandir(): Scanf through all directories inside the ... folder
+ * gethostbyname(domain): Get host by name
+ * setsockopt(s, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on)); : Set broadcast option
+ */
+
 // Gửi đến khi nào hết nội dung (đề phòng trường hợp lỗi)
 int SendPacket(int fd, char *data, int len)
 {
@@ -60,4 +68,12 @@ const char *get_filename_ext(const char *filename)
     if (!dot || dot == filename)
         return "";
     return dot + 1;
+}
+
+void sighandler(int signum)
+{
+    int stat = 0;
+    // Kill zombie processes
+    while (waitpid(-1, &stat, WNOHANG) > 0)
+        ;
 }
