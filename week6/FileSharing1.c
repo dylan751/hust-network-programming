@@ -62,7 +62,7 @@ void udp_process()
     char *response = "127.0.0.1"; // Không quan trọng vì client có thể tách IP từ recvfrom
     char buffer[1024];
     int fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); // Tạo 1 socket UDP
-    SOCKADDR_IN saddr, caddr;                          // Socket address, Client address
+    SOCKADDR_IN saddr, caddr;                          // Server address, Client address
     unsigned int clen = sizeof(caddr);
 
     saddr.sin_family = AF_INET;
@@ -86,7 +86,7 @@ void udp_process()
         sendto(fd, response, strlen(response), 0, (SOCKADDR *)&caddr, clen);
 
         // Lưu thông tin vào file
-        FILE *f = fopen("cliens.txt", "a+t");
+        FILE *f = fopen("clients.txt", "a+t");
         fprintf(f, "%s %s\n", inet_ntoa(caddr.sin_addr), buffer); // Chuyển IP thành dạng đọc được
         fclose(f);
     }
@@ -96,7 +96,7 @@ void tcp_process()
 {
     char buffer[1024];
     int fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); // Tạo 1 socket UDP
-    SOCKADDR_IN saddr, caddr;                           // Socket address, Client address
+    SOCKADDR_IN saddr, caddr;                           // Server address, Client address
     unsigned int clen = sizeof(caddr);
 
     saddr.sin_family = AF_INET;
