@@ -11,12 +11,26 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+/**
+ * @brief
+ * Đợi người dùng nhập tên client từ bàn phím
+ * Gửi broadcast đến cổng 4000 (của server) (255.255.255.255)
+ * Nhận phản hồi của server ở cổng 7000, và tách IP của server
+ * Nối vào cổng 5000 (TCP) để nhận danh sách, hiện ra màn hình.
+ * Đợi người dùng nhập cú pháp
+ * <Tên file> <Thứ tự của client trong danh sách>
+ * Bắt đầu một trình tự gửi file
+ * Thêm lệnh để tạo thêm 1 tiến trình con nữa để nhận file ở cổng TCP 8888
+ * Tiến trình con nhận file liên tục đợi ở 8888, nếu accept được kết nối thì lập tức
+ * Lặp nhận cho đến khi số byte nhận được < 0 (kết nối ngắt), khi nhận được dữ liệu thì ghi vào file (tự đặt tên)
+ */
+
 #define INVALID_SOCKET -1
 #define MAX_CLIENT 1024
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 char name[1024];
-int hasServerAdress = 0;
+int hasServerAddress = 0;
 int tcp_process_id = 0;
 
 void sighandler(int signum)
@@ -29,7 +43,7 @@ void sighandler(int signum)
     }
     if (signum == SIGUSR1)
     {
-        hasServerAdress = 1;
+        hasServerAddress = 1;
     }
 }
 
@@ -67,7 +81,7 @@ void udp_process(char *name)
 void tcp_process()
 {
     printf("Waiting for server address...\n");
-    while (!hasServerAdress)
+    while (!hasServerAddress)
     {
         sleep(100);
     }
