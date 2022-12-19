@@ -42,6 +42,21 @@ int SendPacket(int fd, char *data, int len)
     return sent;
 }
 
+/* Note: Có thể cổng 5555 đã có service dùng rồi -> đổi dòng `58` từ 5555 -> 6101*/
+/**
+ * @brief Đề bài
+ * Xem file PDF
+ * 
+ * @brief Cách chạy chương trình
+ * `./midTerm`: Khởi động server (listen ở port 5555)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv -u 127.0.0.1 5555` để Kết nối tới host: 127.0.0.1, port: 5555* 
+ * Gõ `GET test.txt 6102`
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv -u 127.0.0.1 6102` -> Sẽ nhận được nội dung file test.txt
+
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 int main(int argc, char **argv)
 {
     signal(SIGCHLD, sighandler);
