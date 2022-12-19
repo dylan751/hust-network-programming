@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     // Cấu hình địa chỉ socket gửi dữ liệu
     saddr.sin_family = AF_INET;                     // = AF_INET -> Dùng IPv4
     saddr.sin_port = htons(6101);                   // Listen ở port 6101: Cổng mà phần mềm của thầy đang chạy (lắng nghe mọi gói tin từ cổng 6101)
-    saddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Địa chỉ để gửi dữ liệu đến
+    saddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Địa chỉ để gửi dữ liệu đến, địa chỉ gửi đến thì phải rõ ràng (kp '0')
 
     // Liên tục lấy từ bàn phím -> Gửi đi
     while (1)

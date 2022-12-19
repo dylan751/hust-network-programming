@@ -1,6 +1,7 @@
 /**
  * strstr(str, target): Search if 'str' contains 'target' -> move pointer to the first char of the 'target'
  * strncmp(str1, str2, byte_num): compare first 'byte_num' bytes of the 'str1' to 'str2'
+ * strrchr(str, c): searches for the last occurrence of the character 'c' in the 'str' pointed to
  * scandir(): Scanf through all directories inside the ... folder
  * gethostbyname(domain): Get host by name
  * setsockopt(s, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on)); : Set broadcast option
