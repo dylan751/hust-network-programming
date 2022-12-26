@@ -36,7 +36,9 @@
  *
  * @return int
  *
- * Đọc Header đến khi nào gặp '\r\n\r\n' (vì Header kết thúc bằng ký hiệu đó)
+ * Hàm findpattern(): Tìm pattern -> Trả về vị trí của pattern cần tìm trong mảng 'data',
+ * tổng kích thước 'size', vị trí bắt đầu 'offset' (hoặc trả về null nếu ko tìm thấy)
+ * - 4: Trừ đi '\r\n' -> Trỏ vào bytes cuối cùng của pattern
  */
 
 #define MAX_CONN_NUM 1024
@@ -75,6 +77,28 @@ const char *get_filename_ext(const char *filename)
     if (!dot || dot == filename)
         return "";
     return dot + 1;
+}
+
+char *findpattern(char *data, int size, int offset, char *pattern)
+{
+    int i = offset;
+    while (i < size)
+    {
+        if (data[i] == pattern[0])
+        {
+            int j = i;
+            while (j < size && j - i < strlen(pattern) && data[j] == pattern[j - i])
+            {
+                j++;
+            }
+            if (j - i == strlen(pattern))
+            {
+                return data + i;
+            }
+        }
+        i += 1;
+    }
+    return NULL;
 }
 
 void *ClientThread(void *arg)
@@ -278,12 +302,35 @@ void *ClientThread(void *arg)
                 else
                     break;
             }
-            char *filedata = strstr(full_data, "\r\n\r\n") + 4;
-            int filesize = full_size - strlen(boundary) - 8 - (filedata - full_data);
-            // Ghi dữ liệu đọc đc từ POST vào File -> Upload xong thì lưu file
-            f = fopen("tmp.dat", "wb");
-            fwrite(filedata, 1, filesize, f);
+
+            f = fopen("postbody.dat", "wb");
+            fwrite(full_data, 1, full_size, f);
             fclose(f);
+
+            char *filedata = strstr(full_data, "\r\n\r\n") + 4;
+            int offset = filedata - full_data;
+            int item = 0;
+
+            do
+            {
+                char *pattern = findpattern(full_data, full_size, offset, boundary) - 4;
+                char filename[1024] = {0};
+                sprintf(filename, "tmp%d.dat", item++);
+                f = fopen(filename, "wb");
+                int filesize = pattern - filedata;
+                fwrite(filedata, 1, filesize, f);
+                fclose(f);
+
+                filedata = strstr(pattern, "\r\n\r\n");
+                if (filedata != NULL)
+                {
+                    filedata += 4;
+                    offset = filedata - full_data;
+                }
+                else
+                    break;
+            } while (0 == 0);
+
             free(full_data);
             free(header);
         }
