@@ -35,6 +35,14 @@
  * Nhận dữ liệu từ một client
  * In dữ liệu nhận được ra màn hình
  * Gửi dữ liệu đó đến tất cả các client còn lại (không gửi lại cho chính client vừa gửi)
+ *
+ * @brief Cách chạy chương trình
+ * `./multiplexingWithThread`: Khởi động server (listen ở port 8888)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 8888` để Kết nối tới host: 127.0.0.1, port: 8888 (client 1)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 8888` để Kết nối tới host: 127.0.0.1, port: 8888 (client 2)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 8888` để Kết nối tới host: 127.0.0.1, port: 8888 (client 3)
+ * Lệnh: `lsof -PiTCP -sTCP:LISTEN`: Liệt kê các cổng đang chạy trên máy
+ * Dùng terminal của client 1, gõ chữ gì thì sẽ hiển thị trên terminal của tất cả các terminal của các client khác
  */
 
 #define MAX_CLIENT 1024
@@ -68,7 +76,7 @@ int main()
         FD_SET(s, &fdread); // Thêm socket s vào tập read
 
         // Thêm cả các socket đã kết nối vào fdread
-        for (int i = 0; i < g_count ; i++)
+        for (int i = 0; i < g_count; i++)
         {
             FD_SET(g_client[i], &fdread); // Thêm socket
         }
