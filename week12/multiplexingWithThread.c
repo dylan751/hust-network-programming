@@ -45,6 +45,40 @@ typedef struct sockaddr SOCKADDR;
 int g_client[MAX_CLIENT];
 int g_count = 0;
 
+void *ClientThread(void *arg)
+{
+    fd_set fdread;
+    int startIndex = *((int *)arg); // Ép arg sang int*, rồi lấy nội dung của nó
+    int endIndex = startIndex + N - 1;
+
+    FD_ZERO(&fdread);
+    for (int i = startIndex; i <= endIndex && i < g_count; i++)
+    {
+        // Thêm g_client[i] vào fdread
+        FD_SET(g_client[i], &fdread);
+    }
+    select(FD_SETSIZE, &fdread, NULL, NULL, NULL);
+
+    // Nếu vượt qua hàm `select` -> có client đang gửi dữ liệu đến
+    for (int i = startIndex; i <= endIndex && i < g_count; i++)
+    {
+        if (FD_ISSET(g_client[i], &fdread))
+        {
+            char buffer[1024] = {0};
+            recv(g_client[i], buffer, sizeof(buffer), 0);
+
+            // Gửi buffer tới tất cả client khác
+            for (int j = 0; j < g_count; j++)
+            {
+                if (g_client[j] != g_client[i])
+                {
+                    send(g_client[j], buffer, strlen(buffer), 0);
+                }
+            }
+        }
+    }
+}
+
 int main()
 {
     // Khai báo socket lễ tân
@@ -68,7 +102,7 @@ int main()
         FD_SET(s, &fdread); // Thêm socket s vào tập read
 
         // Thêm cả các socket đã kết nối vào fdread
-        for (int i = 0; i < g_count ; i++)
+        for (int i = 0; i < g_count && i < N; i++)
         {
             FD_SET(g_client[i], &fdread); // Thêm socket
         }
@@ -83,6 +117,16 @@ int main()
             printf("Accepted another client\n");
             // Lưu tmp lại để SELECT lần sau
             g_client[g_count++] = tmp;
+
+            // Với g_count 1 -> N, N+1 -> 2N, 2N+1 -> 3N ... thì tạo từng luồng (mỗi luồng có N client)
+            if ((g_count > N) && (g_count % N == 1))
+            {
+                // Tạo luồng tham số của luồng là g_count - 1 = chỉ số của socket bắt đầu
+                int *arg = (int *)calloc(1, sizeof(int));
+                *arg = g_count - 1;
+                pthread_t tid = 0;
+                pthread_create(&tid, NULL, ClientThread, arg);
+            }
         }
 
         // Lặp để kiểm tra các socket khác
