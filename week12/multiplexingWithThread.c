@@ -1,18 +1,3 @@
-/**
- * @brief Multiplexing: Hàm select()
- *
- * @brief Ý nghĩa các tham số
- * (số lượng file descriptor max, tập các socket (file descriptor) mà cta muốn thăm dò sự kiện liên quan đến read (dữ liệu đi về phía cta), tập các socket (file descriptor) mà cta muốn thăm dò sự kiện liên quan đến write, thăm dò các lỗi xảy ra trên file descriptor, chỉ định timeout)
- * Tập nào mà không muốn thăm dò thì để null (vdu: tập write để null để chỉ thăm dò các dữ liệu đến)
- *
- * @brief  Useful macros
- * FD_ZERO: Dùng để xoá sạch các tập đi
- * FD_SET: Đưa 1 socket fd vào trong 1 tập
- * FD_CLR: Bỏ 1 socket fd ra khỏi 1 tập
- * FD_ISSET: Kiểm tra xem socket fd có tồn tại trong tập ko
- *
- */
-
 #include <stdio.h>
 #include <dirent.h>
 #include <string.h>
@@ -35,13 +20,20 @@
  * Nhận dữ liệu từ một client
  * In dữ liệu nhận được ra màn hình
  * Gửi dữ liệu đó đến tất cả các client còn lại (không gửi lại cho chính client vừa gửi)
- * 
- * @brief
+ *
+ * @brief Cách chạy chương trình
+ * `./multiplexingWithThread`: Khởi động server (listen ở port 8888)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 8888` để Kết nối tới host: 127.0.0.1, port: 8888 (client 1)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 8888` để Kết nối tới host: 127.0.0.1, port: 8888 (client 2)
+ * Mở 1 terminal mới, gõ lệnh: `nc -vv 127.0.0.1 8888` để Kết nối tới host: 127.0.0.1, port: 8888 (client 3)
+ * Lệnh: `lsof -PiTCP -sTCP:LISTEN`: Liệt kê các cổng đang chạy trên máy
+ * Dùng terminal của client 1, gõ chữ gì thì sẽ hiển thị trên terminal của tất cả các terminal của các client khác
  */
 
 #define MAX_CLIENT 1024
 #define MAX_CONN_NUM 1024
 #define INVALID_SOCKET -1
+// #define N FD_SETSIZE - 1 // N: Cực đại = FDSETSIZE - 1 = 63, nhưng trong bài này chỉ để 2 thôi để test cho dễ (kết nối 3 client vào là thấy tạo thread mới rồi)
 #define N 2
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
