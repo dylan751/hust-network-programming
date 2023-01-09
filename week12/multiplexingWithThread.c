@@ -28,18 +28,21 @@
 #include <pthread.h>
 
 /**
- * @file multiplexing.c
+ * @file multiplexingWithThread.c
  * @brief Đề bài
  * Viết 1 Server để:
  * Nhận kết nối và lưu các socket vào một mảng
  * Nhận dữ liệu từ một client
  * In dữ liệu nhận được ra màn hình
  * Gửi dữ liệu đó đến tất cả các client còn lại (không gửi lại cho chính client vừa gửi)
+ * 
+ * @brief
  */
 
 #define MAX_CLIENT 1024
 #define MAX_CONN_NUM 1024
 #define INVALID_SOCKET -1
+#define N 2
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 int g_client[MAX_CLIENT];
@@ -49,34 +52,49 @@ void *ClientThread(void *arg)
 {
     fd_set fdread;
     int startIndex = *((int *)arg); // Ép arg sang int*, rồi lấy nội dung của nó
+    free(arg);
+    arg = NULL;
     int endIndex = startIndex + N - 1;
 
-    FD_ZERO(&fdread);
-    for (int i = startIndex; i <= endIndex && i < g_count; i++)
-    {
-        // Thêm g_client[i] vào fdread
-        FD_SET(g_client[i], &fdread);
-    }
-    select(FD_SETSIZE, &fdread, NULL, NULL, NULL);
+    printf("A new client is created to handle socket %d -> %d", startIndex, endIndex);
 
-    // Nếu vượt qua hàm `select` -> có client đang gửi dữ liệu đến
-    for (int i = startIndex; i <= endIndex && i < g_count; i++)
+    while (0 == 0)
     {
-        if (FD_ISSET(g_client[i], &fdread))
+
+        FD_ZERO(&fdread);
+        for (int i = startIndex; i <= endIndex && i < g_count; i++)
         {
-            char buffer[1024] = {0};
-            recv(g_client[i], buffer, sizeof(buffer), 0);
+            // Thêm g_client[i] vào fdread
+            FD_SET(g_client[i], &fdread);
+        }
 
-            // Gửi buffer tới tất cả client khác
-            for (int j = 0; j < g_count; j++)
+        // Set timeout for `select`
+        struct timeval t;
+        t.tv_sec = 1; // Timeout 1s
+        t.tv_usec = 0;
+
+        select(FD_SETSIZE, &fdread, NULL, NULL, &t);
+
+        // Nếu vượt qua hàm `select` -> có client đang gửi dữ liệu đến
+        for (int i = startIndex; i <= endIndex && i < g_count; i++)
+        {
+            if (FD_ISSET(g_client[i], &fdread))
             {
-                if (g_client[j] != g_client[i])
+                char buffer[1024] = {0};
+                recv(g_client[i], buffer, sizeof(buffer), 0);
+
+                // Gửi buffer tới tất cả client khác
+                for (int j = 0; j < g_count; j++)
                 {
-                    send(g_client[j], buffer, strlen(buffer), 0);
+                    if (g_client[j] != g_client[i])
+                    {
+                        send(g_client[j], buffer, strlen(buffer), 0);
+                    }
                 }
             }
         }
     }
+    return NULL;
 }
 
 int main()
